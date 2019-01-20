@@ -2,39 +2,54 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import SeasonDisplay from './SeasonDisplay';
 import Spinner from './Spinner';
+import useLocation from './useLocation';
 
-class App extends React.Component {
+const App = () => {
 
-    state = {
-        lat: null,
-        errorMessage: ''
+    const [lat, errorMessage] = useLocation();
+
+    let content;
+    if (errorMessage) {
+        content = <div>Error: {errorMessage}</div>
+    } else if (lat) {
+        content = <SeasonDisplay lat={lat} />;
+    } else {
+        content = <Spinner message='Please Accept Location Request' />;
     }
+    return <div className='border red'>{content}</div>
+};
+// class App extends React.Component {
 
-    componentDidMount() {
-        window.navigator.geolocation.getCurrentPosition(
-            (position) => this.setState({ lat: position.coords.latitude }),
-            (err) => this.setState({ errorMessage: err.message })
-        );
-    }
+// state = {
+//     lat: null,
+//     errorMessage: ''
+// }
 
-    renderContent() {
-        if (this.state.errorMessage && !this.state.lat) {
-            return <div>Error: {this.state.errorMessage}</div>
-        }
+// componentDidMount() {
+//     window.navigator.geolocation.getCurrentPosition(
+//         (position) => this.setState({ lat: position.coords.latitude }),
+//         (err) => this.setState({ errorMessage: err.message })
+//     );
+// }
 
-        if (!this.state.errorMessage && this.state.lat) {
-            return <SeasonDisplay lat={this.state.lat} />
-        }
-        return <Spinner message='Please Accept Location Request' />
-    }
+//     renderContent() {
+//         if (this.state.errorMessage && !this.state.lat) {
+//             return <div>Error: {this.state.errorMessage}</div>
+//         }
 
-    render() {
-        return (
-            <div>
-                {this.renderContent()}
-            </div>
-        )
-    }
-}
+//         if (!this.state.errorMessage && this.state.lat) {
+//             return <SeasonDisplay lat={this.state.lat} />
+//         }
+//         return <Spinner message='Please Accept Location Request' />
+//     }
+
+//     render() {
+//         return (
+//             <div>
+//                 {this.renderContent()}
+//             </div>
+//         )
+//     }
+// }
 
 ReactDOM.render(<App />, document.querySelector('#root'));
